@@ -1,0 +1,93 @@
+version: "3.5"
+networks:
+  backend:
+    driver: ${NETWORKS_DRIVER}
+    # driver_opts:
+    #   encrypted: "1"
+volumes:
+  postgres:
+    driver: ${VOLUMES_DRIVER}
+  portainer:
+    driver: ${VOLUMES_DRIVER}
+  proxy:
+    driver: ${VOLUMES_DRIVER}
+services:
+  proxy:
+    build:
+      context: ./proxy
+    volumes:
+      - proxy:/var/log
+    ports:
+      - "${PROXY_SUPERUSER_PORT}:9001"
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+    deploy:
+      restart_policy:
+        condition: any
+    networks:
+      - backend
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:9.6-alpine
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - backend
+  adminer:
+    image: adminer
+    ports:
+      - ${ADMINER_PORT}:8080
+    deploy:
+      restart_policy:
+        condition: any
+    depends_on:
+      - postgres
+    networks:
+      - backend
+  portainer:
+    image: portainer/portainer:latest
+    ports:
+      - "${PORTAINER_PORT}:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer:/data
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - backend
+  cadvisor:
+    image: google/cadvisor:latest
+    ports:
+      - "${CADVISOR_PORT}:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - backend
