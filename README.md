@@ -3,7 +3,7 @@
 ### docker-compose
 Start services
 ```
-docker-compose up -d
+docker-compose up -d --scale chrome=5
 ```
 
 Scale chrome nodes
