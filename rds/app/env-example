@@ -1,5 +1,7 @@
 # common
 RDS_LOG_PATH=
+RDS_MAX_PAGE=
+RDS_LINK_PER_PAGE=
 
 # postgres
 POSTGRES_DB=
