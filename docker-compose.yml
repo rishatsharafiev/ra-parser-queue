@@ -36,8 +36,6 @@ services:
       - /dev/shm:/dev/shm
   chrome:
     image: selenium/node-chrome:3.12.0-boron
-    depends_on:
-      - hub
     environment:
       # - SCREEN_WIDTH=600
       # - SCREEN_HEIGHT=480
@@ -56,6 +54,8 @@ services:
       - backend
     volumes:
       - /dev/shm:/dev/shm
+    depends_on:
+      - hub
   rds:
     build:
       context: ./rds
@@ -73,6 +73,10 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_PORT=${POSTGRES_PORT}
+      - RDS_LOG_PATH=${RDS_LOG_PATH}
+      - RDS_APP_PATH=${RDS_APP_PATH}
+      - RDS_MAX_PAGE=${RDS_MAX_PAGE}
+      - RDS_LINK_PER_PAGE=${RDS_LINK_PER_PAGE}
     networks:
       - backend
     depends_on:
