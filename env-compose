@@ -1,5 +1,5 @@
 # common
-NETWORKS_DRIVER=overlay
+NETWORKS_DRIVER=bridge
 VOLUMES_DRIVER=local
 
 # selenium
