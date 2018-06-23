@@ -11,6 +11,9 @@ gevent = "*"
 python-dotenv = "*"
 "psycopg2" = "*"
 selenium = "*"
+requests = "*"
+lxml = "*"
+cssselect = "*"
 
 
 [dev-packages]

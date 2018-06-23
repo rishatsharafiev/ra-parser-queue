@@ -65,7 +65,7 @@ class TestSite(unittest.TestCase):
                         SELECT "url", "schema"
                         FROM "proxy"
                         WHERE "is_deleted" = FALSE
-                        ORDER BY "created_at", "updated_at";
+                        ORDER BY "updated_at";
                     """
                     cursor.execute(sql_string)
                     urls = [(url[0], url[1]) for url in cursor.fetchall()]
